@@ -1,14 +1,15 @@
-/* File:     mpi_trap1.c
+/* File:     mpi_trap3.c
  * Purpose:  Use MPI to implement a parallel version of the trapezoidal 
- *           rule.  In this version the endpoints of the interval and
- *           the number of trapezoids are hardwired.
+ *           rule.  This version uses collective communications to 
+ *           distribute the input data and compute the global sum.
  *
- * Input:    None.
+ * Input:    The endpoints of the interval of integration and the number
+ *           of trapezoids
  * Output:   Estimate of the integral from a to b of f(x)
  *           using the trapezoidal rule and n trapezoids.
  *
- * Compile:  mpicc -g -Wall -o mpi_trap1 mpi_trap1.c
- * Run:      mpiexec -n <number of processes> ./mpi_trap1
+ * Compile:  mpicc -g -Wall -o mpi_trap2 mpi_trap2.c
+ * Run:      mpiexec -n <number of processes> ./mpi_trap2
  *
  * Algorithm:
  *    1.  Each process calculates "its" interval of
@@ -19,9 +20,12 @@
  *    3b. Process 0 sums the calculations received from
  *        the individual processes and prints the result.
  *
- * Note:  f(x), a, b, and n are all hardwired.
+ * Notes:  
+ *    1. f(x) is all hardwired.
+ *    2. The number of trapezoids should be evenly divisible by
+ *       the number of processes.
  *
- * IPP2:  Section 3.2.2 (pp. 102 and ff.)
+ * IPP2:  Section 3.4.2 (pp. 110 and ff.)
  */
 #include <stdio.h>
 
@@ -29,21 +33,22 @@
 #include <mpi.h>
 #include <math.h>
 
+/* Get the input values */
+void Get_input(int my_rank, int comm_sz, double* a_p, double* b_p,
+      long int* n_p);
+
 /* Calculate local integral  */
-double Trap(double left_endpt, double right_endpt, int trap_count, 
+double Trap(double left_endpt, double right_endpt, long int trap_count, 
    double base_len);    
 
 /* Function we're integrating */
 double f(double x); 
 
 int main(void) {
-   int my_rank, comm_sz, local_n;   
-   long int n = 20*pow(10,8);
-   double a = 0.0, b = 3.0, h, local_a, local_b;
+   int my_rank, comm_sz,  local_n;
+   long int n;   
+   double a, b, h, local_a, local_b;
    double local_int, total_int;
-   int source; 
-   
-   long int resto = n % comm_sz;
 
    /* Let the system do what it needs to start up MPI */
    MPI_Init(NULL, NULL);
@@ -54,10 +59,14 @@ int main(void) {
    /* Find out how many processes are being used */
    MPI_Comm_size(MPI_COMM_WORLD, &comm_sz);
 
+   Get_input(my_rank, comm_sz, &a, &b, &n);
+
    h = (b-a)/n;          /* h is the same for all processes */
-   
-   local_n = n/comm_sz;
-   
+   local_n = n/comm_sz;  /* So is the number of trapezoids  */
+   long int resto = n % comm_sz;
+   /* Length of each process' interval of
+    * integration = local_n*h.  So my interval
+    * starts at: */
    if(my_rank < resto)
    {
 	   local_n++;
@@ -71,19 +80,9 @@ int main(void) {
    local_b = local_a + local_n*h;
    local_int = Trap(local_a, local_b, local_n, h);
 
-
    /* Add up the integrals calculated by each process */
-   if (my_rank != 0) { 
-      MPI_Send(&local_int, 1, MPI_DOUBLE, 0, 0, 
-            MPI_COMM_WORLD); 
-   } else {
-      total_int = local_int;
-      for (source = 1; source < comm_sz; source++) {
-         MPI_Recv(&local_int, 1, MPI_DOUBLE, MPI_ANY_SOURCE, 0,
-            MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-         total_int += local_int;
-      }
-   } 
+   MPI_Reduce(&local_int, &total_int, 1, MPI_DOUBLE, MPI_SUM, 0,
+         MPI_COMM_WORLD);
 
    /* Print the result */
    if (my_rank == 0) {
@@ -98,6 +97,32 @@ int main(void) {
    return 0;
 } /*  main  */
 
+/*------------------------------------------------------------------
+ * Function:     Get_input
+ * Purpose:      Get the user input:  the left and right endpoints
+ *               and the number of trapezoids
+ * Input args:   my_rank:  process rank in MPI_COMM_WORLD
+ *               comm_sz:  number of processes in MPI_COMM_WORLD
+ * Output args:  a_p:  pointer to left endpoint               
+ *               b_p:  pointer to right endpoint               
+ *               n_p:  pointer to number of trapezoids
+ */
+void Get_input(int my_rank, int comm_sz, double* a_p, double* b_p,
+      long int* n_p) {
+
+   /*if (my_rank == 0) {
+      printf("Enter a, b, and n\n");
+      scanf("%lf %lf %d", a_p, b_p, n_p);
+   }*/
+   
+   *a_p = 0; 
+   *b_p = 3; 
+   *n_p = 20*pow(10,8);
+    
+   MPI_Bcast(a_p, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+   MPI_Bcast(b_p, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+   MPI_Bcast(n_p, 1, MPI_INT, 0, MPI_COMM_WORLD);
+}  /* Get_input */
 
 /*------------------------------------------------------------------
  * Function:     Trap
@@ -114,7 +139,7 @@ int main(void) {
 double Trap(
       double left_endpt  /* in */, 
       double right_endpt /* in */, 
-      int    trap_count  /* in */, 
+      long int    trap_count  /* in */, 
       double base_len    /* in */) {
    double estimate, x; 
    int i;
