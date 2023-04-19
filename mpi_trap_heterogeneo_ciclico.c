@@ -152,7 +152,7 @@ void Get_input(int my_rank, int comm_sz, double* a_p, double* b_p,
    
    *a_p = 0; 
    *b_p = 3; 
-   *n_p = 20*pow(10,8);
+   *n_p = 10*pow(10,8);
     
    MPI_Bcast(a_p, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
    MPI_Bcast(b_p, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
