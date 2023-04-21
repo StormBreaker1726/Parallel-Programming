@@ -138,7 +138,7 @@ void Read_n(
    char *fname = "Read_n";
    
    if (my_rank == 0) {
-      printf("What's the order of the vectors?\n");
+      //printf("What's the order of the vectors?\n");
       *n_p = 8000;
    }
    MPI_Bcast(n_p, 1, MPI_INT, 0, comm);
@@ -215,7 +215,7 @@ void Read_vector(
       if (a == NULL) local_ok = 0;
       Check_for_error(local_ok, fname, "Can't allocate temporary vector", 
             comm);
-      printf("Enter the vector %s\n", vec_name);
+      //printf("Enter the vector %s\n", vec_name);
       for (i = 0; i < n; i++)
          a[i] = rand()%180;
       MPI_Scatter(a, local_n, MPI_DOUBLE, local_a, local_n, MPI_DOUBLE, 0,
