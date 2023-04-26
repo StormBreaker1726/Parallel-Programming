@@ -46,7 +46,12 @@ int main(void) {
    int n, local_n;
    int comm_sz, my_rank;
    double *local_x, *local_y, *local_z;
+   double loc_elapsed;
+   double start;
+   double finish;
+   double elapsed;
    MPI_Comm comm;
+
 
    MPI_Init(NULL, NULL);
    comm = MPI_COMM_WORLD;
@@ -63,14 +68,20 @@ int main(void) {
    //Print_vector(local_x, local_n, n, "x is", my_rank, comm);
    Read_vector(local_y, local_n, n, "y", my_rank, comm);
    //Print_vector(local_y, local_n, n, "y is", my_rank, comm);
-   
+   MPI_Barrier(comm);
+   start = MPI_Wtime();
    for(int i = 0; i < 10000; i++)
 	Parallel_vector_sum(local_x, local_y, local_z, local_n);
    //Print_vector(local_z, local_n, n, "The sum is", my_rank, comm);
-
+   finish = MPI_Wtime();
+   loc_elapsed = finish - start;
+   MPI_Reduce(&loc_elapsed, &elapsed, 1, MPI_DOUBLE, MPI_MAX, 0, comm);
    free(local_x);
    free(local_y);
    free(local_z);
+
+   if(my_rank == 0)
+      printf("%e\n", elapsed);
 
    MPI_Finalize();
 
