@@ -45,7 +45,8 @@ int main()
     unsigned int seed = time(NULL); 
 
     // n = 500000000;
-    n = 250000000;
+    // n = 250000000;
+    n = 7812500;
     result = 0;
     a = 11.58;
 

@@ -6,7 +6,7 @@ import csv
 mpi_code_file = '/home/joao-oliveira/Documents/Repositories/Parallel-Programming/MPI/homeworks/tb6/mpi_dot_product.c'
 
 # Replace `csv_file` with the path where you want to write the CSV file
-csv_file = '/home/joao-oliveira/Documents/Repositories/Parallel-Programming/MPI/homeworks/tb6/times_mpi_dot_product_half.csv'
+csv_file = '/home/joao-oliveira/Documents/Repositories/Parallel-Programming/MPI/homeworks/tb6/times_mpi_dot_product_dou_half.csv'
 
 # List of process counts to run the code with
 process_counts = [1, 2, 4, 8, 16]
