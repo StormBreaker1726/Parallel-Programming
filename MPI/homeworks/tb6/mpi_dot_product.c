@@ -44,7 +44,8 @@ int main()
     srand(time(NULL));
     unsigned int seed = time(NULL); 
 
-    n = 500000000;
+    // n = 500000000;
+    n = 250000000;
     result = 0;
     a = 11.58;
 
