@@ -3,10 +3,10 @@ import statistics
 import csv
 
 # Replace `mpi_code_file` with the path to your MPI code file
-mpi_code_file = '/home/joao-oliveira/Documents/Repositories/UFJF/Parallel-Programming/mpi_vector_add.c'
+mpi_code_file = '/home/joao-oliveira/Documents/Repositories/Parallel-Programming/mpi_vector_add.c'
 
 # Replace `csv_file` with the path where you want to write the CSV file
-csv_file = '/home/joao-oliveira/Documents/Repositories/UFJF/Parallel-Programming/time.csv'
+csv_file = '/home/joao-oliveira/Documents/Repositories/Parallel-Programming/time.csv'
 
 # List of process counts to run the code with
 process_counts = [1, 2, 4, 8, 16]
