@@ -1,0 +1,6 @@
+Implementar uma função para verificar se as chaves (números dentro do vetor) já estão ordenadas:
+    a) Serial
+    b) Paralelo:
+        Dica:
+            Localmente: já está ordenado 
+            Globalmente: o maior número de um processo tem que ser menor que o menor do próximo

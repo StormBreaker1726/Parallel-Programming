@@ -1,0 +1,1 @@
+Rodar, entender, gerar as tabelas do mpi_odd_even.c
