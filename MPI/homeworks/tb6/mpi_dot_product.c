@@ -1,4 +1,10 @@
 /*
+Author: João Víctor Costa de Oliveira
+*/
+
+
+
+/*
 3.9. Write an MPI program that implements multiplication of a vector by a scalar
 and dot product. The user should enter two vectors and a scalar, all of which
 are read in by process 0 and distributed among the processes. The results are
