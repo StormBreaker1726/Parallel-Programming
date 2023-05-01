@@ -72,7 +72,6 @@ int main()
 
     MPI_Bcast(&a, 1, MPI_DOUBLE, 0, comm);
 
-
     parallel_vector_scallar_product(local_x, a, local_n, my_rank);
 
     double final;
@@ -94,7 +93,6 @@ int main()
     if(my_rank == 0)
     {
         printf("%e\n", elapsed);
-        // printf("Result = %.2f\n", final);
     }
 
     MPI_Finalize();
