@@ -1,0 +1,3 @@
+Fazer um programa em paralelo para multiplicar duas matrizes MxN, sendo número de linhas da matriz é definida pela letra m e o número de colunas pela letra n.
+Para que exista o produto entre a matriz A e a matriz B, é necessário que o número de colunas da primeira matriz, no caso A, seja igual ao número de linhas da 
+segunda matriz, no caso B.

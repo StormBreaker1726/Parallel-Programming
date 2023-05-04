@@ -21,18 +21,21 @@
  * IPP2  Section 3.1 (pp. 90 and ff.)
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>  /* For strlen             */
 #include <mpi.h>     /* For MPI functions, etc */ 
 
 const int MAX_STRING = 100;
 
-int main(void) {
+int main(int argc, char** argv) {
    char       greeting[MAX_STRING];  /* String storing message */
    int        comm_sz;               /* Number of processes    */
    int        my_rank;               /* My process rank        */
 
+   printf("%.2f, %.2f, %.2f", atof(argv[1]), atof(argv[2]), atof(argv[3]));
+
    /* Start up MPI */
-   MPI_Init(NULL, NULL); 
+   MPI_Init(&argc, &argv);
 
    /* Get the number of processes */
    MPI_Comm_size(MPI_COMM_WORLD, &comm_sz); 

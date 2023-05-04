@@ -9,6 +9,7 @@ that n, the order of the vectors, is evenly divisible by comm sz.
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <mpi.h>
 
@@ -18,7 +19,7 @@ void parallel_vector_scallar_product(double local_x[], double local_a, int local
 void parallel_vector_dot_product(double local_x[], double local_y[], double *result, int local_n, int rank);
 void print_vector(double v[], int n);
 
-int main()
+int main(int argc, char** argv)
 {
     int n;                // size of vectors
     int local_n;          // size of local_n
@@ -35,8 +36,8 @@ int main()
     double local_elapsed; // local elapsed time
     double finish;        // finish time
 
+    MPI_Init(&argc, &argv);
     MPI_Comm comm;
-    MPI_Init(NULL, NULL);
     comm = MPI_COMM_WORLD;
     MPI_Comm_size(comm, &comm_sz);
     MPI_Comm_rank(comm, &my_rank);
@@ -44,11 +45,14 @@ int main()
     srand(time(NULL));
     unsigned int seed = time(NULL); 
 
-    n = 500000000;
+    n = atoi(argv[1]);
     // n = 250000000;
     // n = 7812500;
     result = 0;
-    a = 11.58;
+    a = atof(argv[2]);
+
+    printf("--> n = %d\n", n);
+    printf("--> a = %.3f\n", a);
 
     local_n = n/comm_sz;
 
