@@ -24,7 +24,7 @@ void parallel_vector_scallar_product(double local_x[], double local_a, int local
 void parallel_vector_dot_product(double local_x[], double local_y[], double *result, int local_n, int rank);
 void print_vector(double v[], int n);
 
-int main()
+int main(int argc, char** argv)
 {
     int n;                // size of vectors
     int local_n;          // size of local_n
@@ -50,14 +50,15 @@ int main()
     srand(time(NULL));
     unsigned int seed = time(NULL); 
 
-    n = 500000000;
+    n = atoi(argv[1]);
     // n = 250000000;
     // n = 7812500;
     result = 0;
-    a = 11.58;
+    a = atof(argv[2]);
 
     local_n = n/comm_sz;
-
+    if(my_rank==0)
+        printf("using n = %d traps\n", n);
     MPI_Barrier(comm);
     start = MPI_Wtime();
 
