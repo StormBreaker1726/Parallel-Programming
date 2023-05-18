@@ -15,6 +15,7 @@ that n, the order of the vectors, is evenly divisible by comm sz.
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <mpi.h>
 
@@ -41,8 +42,8 @@ int main(int argc, char** argv)
     double local_elapsed; // local elapsed time
     double finish;        // finish time
 
+    MPI_Init(&argc, &argv);
     MPI_Comm comm;
-    MPI_Init(NULL, NULL);
     comm = MPI_COMM_WORLD;
     MPI_Comm_size(comm, &comm_sz);
     MPI_Comm_rank(comm, &my_rank);
@@ -55,6 +56,9 @@ int main(int argc, char** argv)
     // n = 7812500;
     result = 0;
     a = atof(argv[2]);
+
+    printf("--> n = %d\n", n);
+    printf("--> a = %.3f\n", a);
 
     local_n = n/comm_sz;
     if(my_rank==0)
